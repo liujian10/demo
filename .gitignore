@@ -1,0 +1,15 @@
+doc/
+rar/
+test/
+node_modules/
+*/dist/
+red/
+.idea/
+gulpfile*
+*.psd
+*.doc
+*.xml
+*.lock
+upcache.json
+package.json
+

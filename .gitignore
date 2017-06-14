@@ -12,4 +12,5 @@ gulpfile*
 *.lock
 upcache.json
 package.json
-
+dialog-demo/
+.gitignore

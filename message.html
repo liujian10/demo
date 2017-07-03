@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>message</title>
+    <meta charset="utf-8"/>
+    <meta name="keywords" content="test">
+    <meta name="description" content="test">
+    <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <meta name="apple-mobile-web-app-title" content="test">
+    <!--公共组件-->
+    <!--<style>
+        .levp-msg{position:fixed;display:block;z-index:1010;width:100%;top:10%;left:0;text-align:center}
+        .levp-msg>div{display: inline-block;padding: 1% 2%;background: #fff;border-radius: 4px;border: 1px solid #f2f2f2;box-shadow: 0 2px 4px #f2f2f2;}
+        .levp-msg i{position:relative;display:inline-block;width:24px;height:24px;text-align:center;-moz-border-radius:100%;-webkit-border-radius:100%;border-radius:100%;vertical-align:middle}
+        .levp-msg i:before,.levp-msg i:after{position:absolute;display:inline-block;content:"";height:2px;background:#fff;font-size:0;line-height:0}
+        .levp-msg span{display:inline-block;font-size:24px;line-height:130%;vertical-align:middle}
+        .levp-msg-err>i{background:red}
+        .levp-msg-err>i:before{top:40%;left:20%;width:60%;transform:rotate(45deg);-webkit-transform:rotate(45deg)}
+        .levp-msg-err>i:after{top:40%;left:20%;width:60%;transform:rotate(135deg);-webkit-transform:rotate(135deg)}
+        .levp-msg-success>i{background:#4caf50}
+        .levp-msg-success>i:before{width:60%;top:40%;left:28%;transform:rotate(135deg);-webkit-transform:rotate(135deg)}
+        .levp-msg-success>i:after{width:30%;top:54%;left:15%;transform:rotate(135deg);-webkit-transform:rotate(45deg)}
+        .levp-msg-warning>i{background:#ffc107}
+        .levp-msg-warning>i:before{width:50%;top:30%;left:25%;transform:rotate(90deg);-webkit-transform:rotate(90deg)}
+        .levp-msg-warning>i:after{left:45%;top:70%;width:10%;transform:rotate(90deg);-webkit-transform:rotate(90deg)}
+    </style>-->
+</head>
+<body>
+<button onclick="message.warning({content:'a阿桑大事大'})">warning</button>
+<button onclick="message.error({content:'a阿桑大事大'})">error</button>
+<button onclick="message.success({content:'a阿桑大事大'})">success</button>
+<script src="http://js.letvcdn.com/lc03_pay/201512/17/17/12/jquery-1.10.1.min.js"></script>
+<script>
+    (function ($) {
+        var config = {
+            top: "10%",
+            fontSize: "24px",
+            delay: 2
+        };
+
+        var message = {
+            init: function (data) {
+                setConfig(data);
+                var $body = $("body");
+                if (!$("#levp-msg")[0]) {
+                    $body.prepend('<div id="levp-msg"><div class="levp-msg-warning"><i></i><span class="levp-msg-content"></span></div></div>');
+                }
+                if (!$("#tvp-message-style")[0]) {
+                    $body.prepend('<style id="tvp-message-style"></style>');
+                }
+                var msgStyle = '#levp-msg{position:fixed;display:none;z-index:1010;width:100%;top:' + config.top + ';left:0;text-align:center}' +
+                        '#levp-msg>div{display: inline-block;padding: 1% 2%;background: #fff;border-radius: 4px;border: 1px solid #f2f2f2;box-shadow: 0 2px 4px #f2f2f2;}' +
+                        '#levp-msg i{position:relative;display:inline-block;width:' + config.fontSize + ';height:' + config.fontSize + ';text-align:center;-moz-border-radius:100%;-webkit-border-radius:100%;border-radius:100%;vertical-align:middle}' +
+                        '#levp-msg i:before,#levp-msg i:after{position:absolute;display:inline-block;content:"";height:2px;background:#fff;font-size:0;line-height:0}' +
+                        '#levp-msg span{display:inline-block;font-size:' + config.fontSize + ';line-height:130%;padding-left:5px;vertical-align:middle}' +
+                        '.levp-msg-error>i{background:red}' +
+                        '.levp-msg-error>i:before{top:40%;left:20%;width:60%;transform:rotate(45deg);-webkit-transform:rotate(45deg)}' +
+                        '.levp-msg-error>i:after{top:40%;left:20%;width:60%;transform:rotate(135deg);-webkit-transform:rotate(135deg)}' +
+                        '.levp-msg-success>i{background:#4caf50}' +
+                        '.levp-msg-success>i:before{content:"\E630";width:60%;top:40%;left:28%;transform:rotate(135deg);-webkit-transform:rotate(135deg)}' +
+                        '.levp-msg-success>i:after{width:30%;top:54%;left:15%;transform:rotate(135deg);-webkit-transform:rotate(45deg)}' +
+                        '.levp-msg-warning>i{background:#ffc107}' +
+                        '.levp-msg-warning>i:before{width:50%;top:30%;left:25%;transform:rotate(90deg);-webkit-transform:rotate(90deg)}' +
+                        '.levp-msg-warning>i:after{left:45%;top:70%;width:10%;transform:rotate(90deg);-webkit-transform:rotate(90deg)}';
+                $("#tvp-message-style").html(msgStyle);
+            },
+            success: function (data) {
+                this.show("levp-msg-success", data);
+            },
+            error: function (data) {
+                this.show("levp-msg-error", data);
+            },
+            warning: function (data) {
+                this.show("levp-msg-warning", data);
+            },
+            show: function (className, data) {
+                $("#levp-msg>div").attr("class", className);
+                $(".levp-msg-content").html(data.content);
+                $("#levp-msg").show();
+                setTimeout(function () {
+                    message.hide();
+                }, parseInt(data.delay ? data.delay : config.delay) * 1000);
+            },
+            hide: function () {
+                $("#levp-msg").hide();
+            }
+        };
+
+        function setConfig(data) {
+            if (data && data.top) {
+                config.top = data.top;
+            }
+            if (data && data.fontSize) {
+                config.fontSize = data.fontSize;
+            }
+            if (data && data.delay) {
+                config.delay = data.delay;
+            }
+        }
+
+        message.init();
+
+        window.message = message;
+    })(jQuery)
+</script>
+</body>
+<script>
+    message.init({
+        fontSize: "16px",
+        delay: 10
+    });
+    message.success({
+        content: "123123123",
+        delay: 200
+    });
+</script>
+</html>

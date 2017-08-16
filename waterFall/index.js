@@ -19,12 +19,11 @@
  * 　　　　　┗┻┛　┗┻┛
  * ━━━━━━神兽出没━━━━━━
  */
+'use strict';
 var waterFall = {
     columnNumber: 1,//当前列数量
     columns: [],//列表集合
-    indexImage: 0,//图片下标
-    loadFinish: false,//是否加载完成
-    scrollTop:document.documentElement.scrollTop || document.body.scrollTop,
+    scrollTop: document.documentElement.scrollTop || document.body.scrollTop,
     //获取列数量
     getColumnNumber: function () {
         return Math.floor((document.body.clientWidth - 20) / (this.columnWidth + 20));
@@ -73,13 +72,14 @@ var waterFall = {
     // 是否需要加载图片
     canAppend: function () {
         var minColumn = this.getShortestColumn();
+        var clientHeight = window.innerHeight || document.documentElement.clientHeight;
         return !this.loadFinish
             && minColumn
-            && minColumn.offsetTop + minColumn.clientHeight < 100 + (document.documentElement.scrollTop || document.body.scrollTop) + (window.innerHeight || document.documentElement.clientHeight)
+            && minColumn.offsetTop + minColumn.clientHeight < 100 + (document.documentElement.scrollTop || document.body.scrollTop) + clientHeight * 1.5
     },
     // 是否滚动载入的检测
     appendDetect: function () {
-        if (this.cache.current >= 20) {
+        if (this.cache.current >= 20 && this.indexImage >= this.cache.count) {
             var list = [];
             var indexImage = parseInt(this.indexImage);
             var index = 0;
@@ -100,25 +100,27 @@ var waterFall = {
     append: function (list, index) {
         var self = this, i;
         for (i in list) {
-            var imgUrl = list[i];
-            var img = new Image();
             var key = index++;
-            var timer;
-            //兼容ie8 setInterval传值问题
-            (function (img, key, timer) {
-                timer = setInterval(function () {
-                    if (img.height > 0) {
-                        clearInterval(timer);
-                        self.cache[key] = img;
-                        self.cache.count++;
-                    }
-                }, 100);
-            })(img, key, timer);
-            img.onLoad = function () {
-                clearInterval(timer);
-                self.cache[key] = img;
-            };
-            img.src = imgUrl;
+            if(!self.cache[key]){
+                var imgUrl = list[i];
+                var img = new Image();
+                var timer;
+                //兼容ie8 setInterval传值问题
+                (function (img, key, timer) {
+                    timer = setInterval(function () {
+                        if (img.height > 0) {
+                            clearInterval(timer);
+                            self.cache[key] = img;
+                            self.cache.count++;
+                        }
+                    }, 100);
+                })(img, key, timer);
+                img.onLoad = function () {
+                    clearInterval(timer);
+                    self.cache[key] = img;
+                };
+                img.src = imgUrl;
+            }
         }
         self.doAppend();
     },
@@ -127,14 +129,14 @@ var waterFall = {
         var index = this.indexImage, self = this;
         if (this.canAppend()) {
             var img = this.cache[index];
-            if (!img && this.cache.current < 20 && !this.loadFinish) {
+            if (!img) {
                 setTimeout(function () {
                     self.doAppend();
                 }, 0);
                 return;
             }
 
-            this.createColumn.call(this,this.indexImage,img);
+            this.createColumn.call(this, this.indexImage, img);
             this.cache.current++;
             this.indexImage++;
 
@@ -157,7 +159,6 @@ var waterFall = {
         this.loadFinish = false;
 
         this.setColumnNumber();
-
         this.appendDetect();
     },
     // 滚动加载
@@ -187,7 +188,7 @@ var waterFall = {
         this.container = config.container;
         this.images = config.images;
         this.columnWidth = config.width || 210;
-        this.createColumn=config.createColumn;
+        this.createColumn = config.createColumn;
 
         if (this.container) {
             this.create();

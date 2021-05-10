@@ -1,4 +1,4 @@
-# There just some demo for test
+# Some demos
 
 ## [hit](hit.html)
 
